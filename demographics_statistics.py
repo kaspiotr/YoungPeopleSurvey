@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from utils.math_functions import median, mean, stddev
+from IPython.display import display
 
 response_no = []
 responders_ages = []
@@ -89,6 +90,43 @@ def drop_rows_without_values_and_display_village_vs_city_stats(column_name, df):
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.show()
+    return interesting_var
+
+
+def city_vs_village_height_weight_age_comparison(df, interesting_var):
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(20, 5))
+    data = df.dropna(subset=['Height'])
+    sns.violinplot(x='Height', y="all", hue=interesting_var, data=data, split=True, ax=ax[0]);
+    data = df.dropna(subset=['Weight'])
+    sns.violinplot(x='Weight', y="all", hue=interesting_var, data=data, split=True, ax=ax[1]);
+    interesting_var_ser = df[interesting_var]
+    sns.distplot(df[interesting_var_ser == 'village'].Age.dropna(),
+                 label='village', ax=ax[2], kde=False, bins=30)
+    sns.distplot(df[interesting_var_ser == 'city'].Age.dropna(),
+                 label='city', ax=ax[2], kde=False, bins=30)
+    ax[2].legend()
+    plt.show()
+
+
+def some_outliers_display(df, interesting_var):
+    display(df[df['Height'] < 65][['Age', 'Height', 'Weight', 'Gender', interesting_var]])
+    print()
+    display(df[df['Weight'] > 115][['Age', 'Height', 'Weight', 'Gender', interesting_var]])
+
+
+def drop_outliers(df):
+    df.drop([676, 292, 793, 859, 885, 973, 992], inplace=True)
+
+
+def city_vs_village_height_weight_age_comparison_after_outliers_drop(df, interesting_var):
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12, 5))
+    data = df.dropna(subset=['Height'])
+    sns.violinplot(x='Height', y="all", hue=interesting_var, data=data,
+                   split=True, ax=ax[0], inner='quartile')
+
+    data = df.dropna(subset=['Weight'])
+    sns.violinplot(x='Weight', y="all", hue=interesting_var, data=data,
+                   split=True, ax=ax[1], inner='quartile')
 
 
 def main():
@@ -104,7 +142,11 @@ def main():
     display_missing_values(df)
     display_missing_values_info(df)
     display_missing_values_further_info(df)
-    drop_rows_without_values_and_display_village_vs_city_stats('Village - town', df)
+    interesting_var = drop_rows_without_values_and_display_village_vs_city_stats('Village - town', df)
+    city_vs_village_height_weight_age_comparison(df, interesting_var)
+    some_outliers_display(df, interesting_var)
+    drop_outliers(df)
+    city_vs_village_height_weight_age_comparison(df, interesting_var)
 
 
 if __name__ == '__main__':
