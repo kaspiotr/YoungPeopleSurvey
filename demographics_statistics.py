@@ -1,6 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
-from utils.math_functions import median, mean
+from utils.math_functions import median, mean, stddev
 
 response_no = []
 responders_ages = []
@@ -53,6 +53,9 @@ def show_responders_age_histogram(data ,bin_count=40):
 
 def main():
     read_age_from_csv()
+    print("Average responder age is %f" % mean(responders_ages))
+    print("Median of responders age is %d" % median(responders_ages))
+    print("Standard deviation of responders age is %f" % stddev(responders_ages))
     show_responders_age_box_plot(responders_ages)
     show_responders_age_histogram(responders_ages)
 
