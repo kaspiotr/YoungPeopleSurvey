@@ -68,7 +68,6 @@ def alcohol_consumption():
 
         plt.suptitle("Alcohol consumption by age and amount")
 
-        print(percentage_of_heavy_drinkers)
         plt.rcParams['figure.figsize'] = [30, 15]
         plt.show()
 
