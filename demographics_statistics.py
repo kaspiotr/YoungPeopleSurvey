@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from utils.math_functions import median, mean, stddev
 
 response_no = []
@@ -69,6 +70,27 @@ def display_missing_values_info(df):
         df[df['Gender'] == 'male']['Height'].isnull().sum()))
 
 
+def display_missing_values_further_info(df):
+    omitted = df[(df['Weight'].isnull()) | df['Height'].isnull()]
+    print('Number of people with omitted weight or height: {:.0f}'.format(omitted.shape[0]))
+    nas = omitted.drop(['Weight', 'Height', 'Number of siblings', 'Age'], 1).isnull().sum().sum()
+    print('Number of fields that were omitted by people who did not fill Weight or Height: {:.0f}'.format(nas))
+
+
+def drop_rows_without_values_and_display_village_vs_city_stats(column_name, df):
+    interesting_var = column_name
+    mapping = {interesting_var: {'city': 0, 'village': 1}}
+    df.dropna(subset=[interesting_var], inplace=True)
+    # to have ability to use hue parameter in seaborn for better comparison
+    df["all"] = ""
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
+    sns.countplot(y=interesting_var, data=df, ax=ax[0])
+    sns.countplot(y=interesting_var, hue='Gender', data=df, ax=ax[1])
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.show()
+
+
 def main():
     read_age_from_csv()
     df = pd.read_csv('resources/young-people-survey/responses.csv')
@@ -81,6 +103,8 @@ def main():
     show_responders_age_histogram(responders_ages)
     display_missing_values(df)
     display_missing_values_info(df)
+    display_missing_values_further_info(df)
+    drop_rows_without_values_and_display_village_vs_city_stats('Village - town', df)
 
 
 if __name__ == '__main__':
