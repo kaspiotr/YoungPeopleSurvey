@@ -43,9 +43,18 @@ def show_responders_age_box_plot(data):
     plt.show()
 
 
+def show_responders_age_histogram(data ,bin_count=40):
+    plt.title("Responders age histogram")
+    plt.xlabel("age")
+    plt.ylabel("number of responders at specified age")
+    plt.hist(data, bins=bin_count, range=(15, 30))
+    plt.show()
+
+
 def main():
     read_age_from_csv()
     show_responders_age_box_plot(responders_ages)
+    show_responders_age_histogram(responders_ages)
 
 
 if __name__ == '__main__':
