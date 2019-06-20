@@ -1,5 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
+import pandas as pd
 from utils.math_functions import median, mean, stddev
 
 response_no = []
@@ -43,7 +44,7 @@ def show_responders_age_box_plot(data):
     plt.show()
 
 
-def show_responders_age_histogram(data ,bin_count=40):
+def show_responders_age_histogram(data, bin_count=40):
     plt.title("Responders age histogram")
     plt.xlabel("age")
     plt.ylabel("number of responders at specified age")
@@ -51,13 +52,35 @@ def show_responders_age_histogram(data ,bin_count=40):
     plt.show()
 
 
+def display_missing_values(df):
+    nulls = df.isnull().sum().sort_values(ascending=False)
+    nulls.plot(kind='bar', figsize=(23, 5))
+    plt.show()
+
+
+def display_missing_values_info(df):
+    print('Number of girls who omitted weight field: {:.0f}'.format(
+        df[df['Gender'] == 'female']['Weight'].isnull().sum()))
+    print('Number of boys who omitted weight field: {:.0f}'.format(
+        df[df['Gender'] == 'male']['Weight'].isnull().sum()))
+    print('Number of girls who omitted height field: {:.0f}'.format(
+        df[df['Gender'] == 'female']['Height'].isnull().sum()))
+    print('Number of boys who omitted height field: {:.0f}'.format(
+        df[df['Gender'] == 'male']['Height'].isnull().sum()))
+
+
 def main():
     read_age_from_csv()
+    df = pd.read_csv('resources/young-people-survey/responses.csv')
+    df.head(2)
+    df.describe()
     print("Average responder age is %f" % mean(responders_ages))
     print("Median of responders age is %d" % median(responders_ages))
     print("Standard deviation of responders age is %f" % stddev(responders_ages))
     show_responders_age_box_plot(responders_ages)
     show_responders_age_histogram(responders_ages)
+    display_missing_values(df)
+    display_missing_values_info(df)
 
 
 if __name__ == '__main__':
