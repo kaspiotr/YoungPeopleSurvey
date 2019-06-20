@@ -3,6 +3,7 @@ import matplotlib.pylab as plt
 import random
 import math
 
+
 def sample_test():
     with open('resources/young-people-survey/responses.csv') as csv_file:
         read_csv = csv.reader(csv_file, delimiter=',')
