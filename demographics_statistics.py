@@ -167,6 +167,7 @@ def main():
     city_vs_village_height_weight_age_comparison(df, interesting_var)
     some_outliers_display(df, interesting_var)
     drop_outliers(df)
+    df.describe()
     city_vs_village_height_weight_age_comparison(df, interesting_var)
 
 
