@@ -7,6 +7,8 @@ from IPython.display import display
 
 response_no = []
 responders_ages = []
+responders_heights = []
+responders_weights = []
 
 
 def read_age_from_csv():
@@ -23,12 +25,14 @@ def read_age_from_csv():
             response_no.append(response_idx)
             try:
                 responders_ages.append(int(row[headers.index("Age")]))
+                responders_heights.append(int(row[headers.index("Height")]))
+                responders_weights.append(int(row[headers.index("Weight")]))
             except ValueError:
-                pass  # or whatever
+                pass
             response_idx += 1
 
 
-def show_responders_age_box_plot(data):
+def show_responders_box_plot(data, ylabel):
     data_median = median(data)
     sub_data_Q1 = list(filter(lambda x: x < data_median, data))
     sub_data_Q3 = list(filter(lambda x: x > data_median, data))
@@ -42,15 +46,18 @@ def show_responders_age_box_plot(data):
     plt.hlines(y=[flier_high, mean(data), Q1, Q3, data_median, flier_low], xmin=0, xmax=1, colors='k',
                linestyles='dashed')
     plt.yticks([flier_high, Q1, Q3, mean(data), data_median, flier_low])
-    plt.ylabel("age")
+    plt.ylabel(ylabel)
     plt.show()
 
 
-def show_responders_age_histogram(data, bin_count=40):
-    plt.title("Responders age histogram")
-    plt.xlabel("age")
-    plt.ylabel("number of responders at specified age")
-    plt.hist(data, bins=bin_count, range=(15, 30))
+def show_responders_histogram(data, label, lower_bound, upper_bound, bin_count=plt.rcParams["hist.bins"]):
+    plt.title("Responders " + label + " histogram")
+    plt.xlabel(label)
+    if label == "age":
+        plt.ylabel("number of responders at specified age")
+    else:
+        plt.ylabel("number of responders with specified " + label)
+    plt.hist(data, bins=bin_count, range=(lower_bound, upper_bound))
     plt.show()
 
 
@@ -134,11 +141,25 @@ def main():
     df = pd.read_csv('resources/young-people-survey/responses.csv')
     df.head(2)
     df.describe()
+    print()
     print("Average responder age is %f" % mean(responders_ages))
     print("Median of responders age is %d" % median(responders_ages))
     print("Standard deviation of responders age is %f" % stddev(responders_ages))
-    show_responders_age_box_plot(responders_ages)
-    show_responders_age_histogram(responders_ages)
+    show_responders_box_plot(responders_ages, "age")
+    show_responders_histogram(responders_ages, "age", 15, 30, 40)
+    print()
+    print("Average responder height is %f" % mean(responders_heights))
+    print("Median of responders height is %d" % median(responders_heights))
+    print("Standard deviation of responders height is %f" % stddev(responders_heights))
+    show_responders_box_plot(responders_heights, "height")
+    show_responders_histogram(responders_heights, "height", 60, 205, 80)
+    print()
+    print("Average responder weight is %f" % mean(responders_weights))
+    print("Median of responders weight is %d" % median(responders_weights))
+    print("Standard deviation of responders weight is %f" % stddev(responders_weights))
+    show_responders_box_plot(responders_weights, "weight")
+    show_responders_histogram(responders_weights, "weight", 45, 170, 40)
+
     display_missing_values(df)
     display_missing_values_info(df)
     display_missing_values_further_info(df)
